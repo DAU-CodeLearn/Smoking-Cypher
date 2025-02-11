@@ -1,0 +1,88 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Flutter 관련 설정 파일 (불필요한 빌드 캐시)
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-versions
+.ios/
+.macos/
+.windows/
+.linux/
+web/
+android/.gradle/
+android/.idea/
+android/local.properties
+android/key.properties
+
+# Firebase 관련 (로컬에서만 사용해야 하는 파일)
+firebase_app_id_file.json
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# IDE 관련 (VS Code, Android Studio, Xcode)
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+xcuserdata/
+*.xcworkspace
+Pods/
+
+# 빌드 및 캐시 폴더
+.dart_tool/
+.pub-cache/
+build/
+.generated/
+
+# Debugging 관련
+*.log
+*.lock
+*.map.json
+*.symbols
+*.tmp
+*.swp
