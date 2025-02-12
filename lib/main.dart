@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart'; // ✅ Firebase 추가
+import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'package:smoking_cypher/providers/auth_provider.dart';
-import 'package:smoking_cypher/ui/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:smoking_cypher/providers/auth_provider.dart' as local_auth; // ✅ 별칭 추가
+import 'package:smoking_cypher/ui/screens/main_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // ✅ Flutter 엔진 초기화
-  await Firebase.initializeApp(); // ✅ Firebase 초기화
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => local_auth.AuthProvider()), // ✅ 별칭 사용
       ],
       child: MyApp(),
     ),
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginScreen(),
+      home: MainScreen(), // ✅ 메인 화면 실행
     );
   }
 }

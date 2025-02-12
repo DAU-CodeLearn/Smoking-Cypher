@@ -8,6 +8,8 @@ class AuthProvider with ChangeNotifier {
 
   User? get user => _user;
 
+  bool get isLoggedIn => _user != null; // ✅ 로그인 여부 확인
+
   Future<void> signInWithGoogle() async {
     _user = await _authService.signInWithGoogle(); // ✅ AuthService의 로그인 메서드 호출
     notifyListeners();
