@@ -12,11 +12,11 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 1; // 기본 선택: Home
+  int _selectedIndex = 0; // 기본 선택: Home
 
   final List<Widget> _pages = [
-    ChatScreen(),
     Center(child: Text('Home Screen')), // 홈 화면
+    ChatScreen(),
     ProfileScreen(),
   ];
 
@@ -24,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     // ✅ 로그인 여부 체크하여 채팅 및 프로필 제한
-    if (!authProvider.isLoggedIn && (index == 0 || index == 2)) {
+    if (!authProvider.isLoggedIn && (index == 1 || index == 2)) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()), // 로그인 화면으로 이동

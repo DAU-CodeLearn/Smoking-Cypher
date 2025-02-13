@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smoking_cypher/providers/auth_provider.dart' as local_auth; // ✅ 별칭 추가
 import 'package:smoking_cypher/ui/screens/main_screen.dart';
 

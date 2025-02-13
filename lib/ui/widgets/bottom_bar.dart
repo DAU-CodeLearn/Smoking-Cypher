@@ -12,8 +12,8 @@ class BottomNavigation extends StatelessWidget {
       currentIndex: selectedIndex,
       onTap: onItemTapped,
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chat"),
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+        BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chat"),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
       ],
     );
