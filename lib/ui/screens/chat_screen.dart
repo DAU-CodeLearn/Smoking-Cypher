@@ -5,6 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../data/services/firestore_service.dart';
 
 class ChatScreen extends StatefulWidget {
+  final String chatRoomId;
+  ChatScreen({required this.chatRoomId});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -13,20 +16,20 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController messageController = TextEditingController();
   final FirestoreService _firestoreService = FirestoreService();
 
-  void sendMessage() {
+  void sendMessage() {  // 메시지를 전송하는 함수
     final authProvider = Provider.of<local.AuthProvider>(context, listen: false);
-    final User? user = authProvider.user; // ✅ 타입을 User?로 지정
+    final User? user = authProvider.user;
 
     if (user != null && messageController.text.isNotEmpty) {
-      // ✅ user.displayName이 null이면 'Unknown' 사용
       final senderName = user.displayName ?? 'Unknown';
-
-      _firestoreService.sendMessage(messageController.text, senderName);
+      _firestoreService.sendMessage(
+        widget.chatRoomId, // 해당 채팅방의 ID를 인자로 전달
+        messageController.text, // 입력된 메시지
+        senderName, // 전송자 이름
+      );
       messageController.clear();
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -36,25 +39,21 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: StreamBuilder(
-              stream: _firestoreService.getMessages(),
+              stream: _firestoreService.getMessages(widget.chatRoomId), // 채팅방 별 메시지 스트림
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
-
                 if (!snapshot.hasData || snapshot.data == null) {
                   return Center(child: Text("메시지가 없습니다."));
                 }
-
                 final messages = snapshot.data.docs;
-
                 return ListView.builder(
                   reverse: true,
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final doc = messages[index];
-                    final data = (doc.data() as Map<String, dynamic>?) ?? {}; // ✅ 안전한 데이터 변환
-
+                    final data = (doc.data() as Map<String, dynamic>?) ?? {};
                     return ListTile(
                       title: Text(data['text'] ?? ''),
                       subtitle: Text(data['sender'] ?? 'Unknown'),
@@ -75,9 +74,13 @@ class _ChatScreenState extends State<ChatScreen> {
                       labelText: "메시지 입력",
                       border: OutlineInputBorder(),
                     ),
+                    textInputAction: TextInputAction.send, // 키보드에서 '전송' 버튼을 보여줌
+                    onSubmitted: (value) { // 엔터키 또는 전송 버튼 클릭 시 호출됨
+                      sendMessage();
+                    },
                   ),
                 ),
-                IconButton(
+                IconButton( // 아이콘 버튼을 눌러서도 전송 가능
                   icon: Icon(Icons.send),
                   onPressed: sendMessage,
                 ),

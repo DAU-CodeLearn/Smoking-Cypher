@@ -3,12 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart'; // 🔹 Firebase의 AuthProvider
 import 'package:smoking_cypher/providers/auth_provider.dart' as local_auth; // ✅ 내 AuthProvider에 별칭 추가
-import 'package:smoking_cypher/ui/screens/login_screen.dart';
+import 'package:smoking_cypher/ui/screens/main_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final local_auth.AuthProvider authProvider = Provider.of<local_auth.AuthProvider>(context, listen: false);
+    final local_auth.AuthProvider authProvider =
+    Provider.of<local_auth.AuthProvider>(context, listen: false);
     final User? user = authProvider.user;
 
     return Scaffold(
@@ -40,7 +41,7 @@ class ProfileScreen extends StatelessWidget {
                     await authProvider.signOut();
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                      MaterialPageRoute(builder: (context) => MainScreen()),
                           (route) => false,
                     );
                   },

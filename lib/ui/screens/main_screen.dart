@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smoking_cypher/providers/auth_provider.dart';
 import 'package:smoking_cypher/ui/screens/login_screen.dart';
-import 'package:smoking_cypher/ui/screens/chat_screen.dart';
+import 'package:smoking_cypher/ui/screens/chatlist_screen.dart';
 import 'package:smoking_cypher/ui/screens/profile_screen.dart';
 import 'package:smoking_cypher/ui/widgets/bottom_bar.dart';
 
@@ -16,14 +16,14 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     Center(child: Text('Home Screen')), // 홈 화면
-    ChatScreen(),
+    ChatListScreen(),
     ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    // ✅ 로그인 여부 체크하여 채팅 및 프로필 제한
+    // 로그인하지 않은 경우 채팅 및 프로필 탭 접근 제한
     if (!authProvider.isLoggedIn && (index == 1 || index == 2)) {
       Navigator.push(
         context,
