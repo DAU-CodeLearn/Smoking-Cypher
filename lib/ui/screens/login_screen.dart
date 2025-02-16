@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smoking_cypher/providers/auth_provider.dart';
+import 'package:smoking_cypher/ui/screens/chatlist_screen.dart';
 import 'chat_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -15,7 +16,7 @@ class LoginScreen extends StatelessWidget {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => ChatScreen()),
+                  MaterialPageRoute(builder: (context) => ChatListScreen()),
                 );
               });
             }
