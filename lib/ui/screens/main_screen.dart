@@ -29,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()), // 로그인 화면으로 이동
       );
-      return;
+      return; // 로그인하지 않았으면 선택된 탭을 변경하지 않음
     }
 
     setState(() {
