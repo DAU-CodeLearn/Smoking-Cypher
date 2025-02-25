@@ -1,8 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smoking_cypher/providers/auth_provider.dart' as local;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../data/services/firestore_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smoking_cypher/providers/auth_provider.dart' as local;
 
 class ChatScreen extends StatefulWidget {
   final String chatRoomId;
@@ -15,19 +19,33 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController messageController = TextEditingController();
   final FirestoreService _firestoreService = FirestoreService();
+  final ImagePicker _picker = ImagePicker(); // 이미지 선택기 추가
 
-  void sendMessage() {  // 메시지를 전송하는 함수
+  void sendMessage({String? imageUrl}) async {
     final authProvider = Provider.of<local.AuthProvider>(context, listen: false);
     final User? user = authProvider.user;
 
-    if (user != null && messageController.text.isNotEmpty) {
+    if (user != null && (messageController.text.isNotEmpty || imageUrl != null)) {
       final senderName = user.displayName ?? 'Unknown';
-      _firestoreService.sendMessage(
-        widget.chatRoomId, // 해당 채팅방의 ID를 인자로 전달
-        messageController.text, // 입력된 메시지
-        senderName, // 전송자 이름
+      await _firestoreService.sendMessage(
+        widget.chatRoomId,
+        messageController.text.isNotEmpty ? messageController.text : null,
+        senderName,
+        imageUrl: imageUrl, // 이미지 URL이 있을 경우 함께 저장
       );
       messageController.clear();
+    }
+  }
+
+  Future<void> pickAndUploadImage() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) return;
+
+    File imageFile = File(pickedFile.path);
+    String? imageUrl = await _firestoreService.uploadImage(imageFile, widget.chatRoomId);
+
+    if (imageUrl != null) {
+      sendMessage(imageUrl: imageUrl);
     }
   }
 
@@ -39,7 +57,7 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: StreamBuilder(
-              stream: _firestoreService.getMessages(widget.chatRoomId), // 채팅방 별 메시지 스트림
+              stream: _firestoreService.getMessages(widget.chatRoomId),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -55,8 +73,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     final doc = messages[index];
                     final data = (doc.data() as Map<String, dynamic>?) ?? {};
                     return ListTile(
-                      title: Text(data['text'] ?? ''),
+                      title: data['text'] != null ? Text(data['text'] ?? '') : null,
                       subtitle: Text(data['sender'] ?? 'Unknown'),
+                      leading: data['imageUrl'] != null
+                          ? Image.network(data['imageUrl']!, width: 100, height: 100)
+                          : null,
                     );
                   },
                 );
@@ -67,6 +88,10 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
+                IconButton(
+                  icon: Icon(Icons.photo),
+                  onPressed: pickAndUploadImage,
+                ),
                 Expanded(
                   child: TextField(
                     controller: messageController,
@@ -74,15 +99,13 @@ class _ChatScreenState extends State<ChatScreen> {
                       labelText: "메시지 입력",
                       border: OutlineInputBorder(),
                     ),
-                    textInputAction: TextInputAction.send, // 키보드에서 '전송' 버튼을 보여줌
-                    onSubmitted: (value) { // 엔터키 또는 전송 버튼 클릭 시 호출됨
-                      sendMessage();
-                    },
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (value) => sendMessage(),
                   ),
                 ),
-                IconButton( // 아이콘 버튼을 눌러서도 전송 가능
+                IconButton(
                   icon: Icon(Icons.send),
-                  onPressed: sendMessage,
+                  onPressed: () => sendMessage(),
                 ),
               ],
             ),
