@@ -7,7 +7,12 @@ import 'package:smoking_cypher/ui/screens/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+    print("✅ Firebase 초기화 완료");
+  } catch (e) {
+    print("❌ Firebase 초기화 실패: $e");
+  }
   runApp(
     MultiProvider(
       providers: [
